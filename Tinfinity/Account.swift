@@ -57,13 +57,14 @@ class Account: NSObject {
                             let userData = json[i]["user"]
                             let position = json[i]["position"]
                             var newUser = User(userId: userData["_id"].string!, firstName: userData["name"].string!, lastName: userData["surname"].string!)
-                            newUser.fetch()
+                            newUser.fetch({ (result) -> Void in
+                                let userPosition = CLLocationCoordinate2D(latitude: position["latitude"].double!, longitude: position["longitude"].double!)
+                                
+                                newUser.position = userPosition
+                                self.users.removeAll(keepCapacity: false)
+                                self.users.append(newUser)
+                            })                           
                             
-                            let userPosition = CLLocationCoordinate2D(latitude: position["latitude"].double!, longitude: position["longitude"].double!)
-                            
-                            newUser.position = userPosition
-                            self.users.removeAll(keepCapacity: false)
-                            self.users.append(newUser)
                         }
             	    }
         	}

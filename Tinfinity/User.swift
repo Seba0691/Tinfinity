@@ -40,6 +40,7 @@ class User {
     // User position
     var position: CLLocationCoordinate2D?
     
+    
     /* Utilities */
     
     // Fullname
@@ -77,7 +78,7 @@ class User {
     /**
      * Recuperiamo dal server le informazioni legate all'utente
      */
-    func fetch() {
+    func fetch(completion: (result: User? ) -> Void) {
         let manager = Alamofire.Manager.sharedInstance
         
         manager.request(.GET, NSBundle.mainBundle().objectForInfoDictionaryKey("Server URL") as! String + "/api/users/" + userId, encoding : .JSON)
@@ -93,6 +94,8 @@ class User {
                         for(var i=0; i < account.chats.count; i++){
                             if (account.chats[i].user.userId == self.userId){
                                 account.chats.removeAtIndex(i)
+                                println("An user has been removed from the array")
+                                completion(result: nil)
                             }
                         }
                         
@@ -108,8 +111,10 @@ class User {
                     
                     	// Lets download the image
                     	self.fetchImage()
+                        completion(result: self)
                     }
-                }}
+                }
+        }
     }
     
     /**

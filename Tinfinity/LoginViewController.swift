@@ -43,7 +43,7 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate{
             api?.retrieveProfileFromServer({ (result) -> Void in
                 //If the user is still nil it means the request to the server did not succeded, we need to understand if it's an internet issue or server issue
                 if(result == false){
-                    self.checkLoginProblem()
+                    self.checkLoginProblem(true)
                 }
                 else{
                     self.api?.retriveChatHistory(account.user.userId, completion: { (result) -> Void in })
@@ -73,10 +73,11 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate{
             api?.retrieveProfileFromServer({ (result) -> Void in
                  //If the user is still nil it means the request to the server did not succeded, we need to understand if it's an internet issue or server issue
                 if(result == false){
-                	self.checkLoginProblem()
+                    self.checkLoginProblem(false)
                 }
                 else{
-                    self.api?.retriveChatHistory(account.user.userId, completion: { (result) -> Void in })
+                    //If there is already a fb token, we already got the chat history from the server, so we only check if there are chats in local db
+                    Chat.loadChatsFromCore()
                     self.performSegueWithIdentifier("loginExecuted", sender: self)
                     return
                 }
@@ -90,16 +91,20 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate{
         
     }
     
-    func checkLoginProblem(){
+    func checkLoginProblem(newLogin: Bool){
         
         let tryAgainAction = UIAlertAction(title: "Try Again", style: .Default){ (_) -> Void in
             
             self.api?.retrieveProfileFromServer({ (result) -> Void in
             	if(result == false){
-            	    self.checkLoginProblem()
+            	    self.checkLoginProblem(newLogin)
             	}else{
+                    if(newLogin == true){
                     self.api?.retriveChatHistory(account.user.userId, completion: { (result) -> Void in})
-            	    self.performSegueWithIdentifier("loginExecuted", sender: self)
+					}else{
+						Chat.loadChatsFromCore()
+					}
+					self.performSegueWithIdentifier("loginExecuted", sender: self)
             	}
         	})
         }

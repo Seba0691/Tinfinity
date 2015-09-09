@@ -55,11 +55,6 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         self.mapView.zoomEnabled = false;
         self.mapView.scrollEnabled = false;
         
-        for(var i = 0; i < account.users.count; i++){
-         	let dropPin = UserAnnotation(user: account.users[i])
-            mapView.addAnnotation(dropPin)
-        }
-        
         
     }
     
@@ -138,7 +133,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     		}
             
         let customAnnotation = annotation as! UserAnnotation
-        annotationView.image = customAnnotation.image
+        annotationView.image = ImageUtil.cropToSquare(image: customAnnotation.image)
             
     	return annotationView
     }
@@ -174,6 +169,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                     }else{
                 		chatListController.newChat = true
                 		account.chats.insert(Chat(user: senderAnnotation.user, lastMessageText: "", lastMessageSentDate: NSDate()), atIndex: 0)
+                        account.chats[0].saveNewChat()
                     }
             	}
         	}

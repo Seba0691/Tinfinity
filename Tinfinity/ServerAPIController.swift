@@ -94,31 +94,30 @@ class ServerAPIController{
                         if (user1 == account.user.userId){
                             //Creiamo un nuovo oggetto user che ha come utente l'id di user2, poichè entrati in questo if user1 coincide con l'id utente dell'accunt in uso. Altrimenti inizializziamo l'user con id user1
                             newUser = User(userId: user2!,firstName: "",lastName: "")
-                            // Retrieve user data
-                            newUser.fetch();
                         }else{
                             newUser = User(userId: user1!,firstName: "",lastName: "")
-                            // Retrieve user data
-                            newUser.fetch();
                         }
-                        var newChat = Chat(user: newUser,lastMessageText: "",lastMessageSentDate: date)
+                        // Retrieve user data
+                        newUser.fetch({ (result) -> Void in
                         
-                        for(var k = 0 ; k < user1MessagesCount; k++){
+                            var newChat = Chat(user: newUser,lastMessageText: "",lastMessageSentDate: date)
                             
-                            newChat.allMessages.append(self.createJSQMessage(user1!, localMessage: innerData["user1"][k]))
-                            
-                        }
-                        for (var k = 0; k < user2MessagesCount; k++){
-                            
-                            newChat.allMessages.append(self.createJSQMessage(user2!, localMessage: innerData["user2"][k]))
-                            
-                        }
-                        newChat.reorderChat()
-                        var i = 0
-                        while(i < account.chats.count && newChat.lastMessageSentDate.compare(account.chats[i].lastMessageSentDate) == NSComparisonResult.OrderedAscending){
-							i++
-                        }
-                        account.chats.insert(newChat, atIndex: i++)
+                            for(var k = 0 ; k < user1MessagesCount; k++){
+                                
+                                newChat.allMessages.append(self.createJSQMessage(user1!, localMessage: innerData["user1"][k]))
+                                
+                            }
+                            for (var k = 0; k < user2MessagesCount; k++){
+                                
+                                newChat.allMessages.append(self.createJSQMessage(user2!, localMessage: innerData["user2"][k]))
+                                
+                            }
+                            newChat.reorderChat()
+                            newChat.saveNewChat()
+                            newChat.insertChat()
+                            completion(result: account.chats)
+                        })
+                       
                     }
                     
                 }

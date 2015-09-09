@@ -17,7 +17,15 @@ class ChatListViewController: UIViewController, UITableViewDelegate, UITableView
     
     var chats: [Chat] { return account.chats }
     var imageCache = [String:UIImage]()
-    //Need to initialize a newchat from the map
+    
+    /*This can assume 3 values:
+	* - nil: means the user got in this controller by simply clicking the regoular button
+	* - false: means the user got in this controller by selecting a nearby user on the map, so we have to open the
+	*			relative chat, which already exists
+	* - true: means the user got here by selecting a nearby user with whom he never chatted before.
+    * 
+    *  The check on this is made in the preparefore segue with id: chatSelected
+	*/
     var newChat: Bool?
     //The id passed by the map that tells us which is the chat we need to open
     var clickedUserId: String?

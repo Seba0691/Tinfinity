@@ -106,6 +106,9 @@ class ChatViewController: JSQMessagesViewController {
         self.socket.emit("message", json)
         chat!.updateLastMessage()
         
+        //Let's save it in core data
+        chat!.saveNewMessage(newMessage, userId: chat!.user.userId)
+        
         self.finishSendingMessage()
     }
     
@@ -132,6 +135,9 @@ class ChatViewController: JSQMessagesViewController {
                 self!.chat!.allMessages.append(newMessage)
                 self!.chat!.updateLastMessage()
                 self!.finishReceivingMessage()
+                
+                //Let's save the message in core data
+                self!.chat!.saveNewMessage(newMessage, userId: user_id!)
             }
             // Message received for other conversation
             else {
@@ -143,6 +149,9 @@ class ChatViewController: JSQMessagesViewController {
                     otherChat.allMessages.append(newMessage);
                     otherChat.updateLastMessage()
                     otherChat.unreadMessageCount++
+                    
+                    //Let's save the message in core data
+                    self!.chat!.saveNewMessage(newMessage, userId: user_id!)
                 }
             }    
             
